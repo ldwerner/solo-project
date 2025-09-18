@@ -31,4 +31,15 @@ router.get('/', async (req, res) => {
   res.json(items);
 });
 
+router.delete('/:id', async (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const item = await Item.findOneAndDelete({ _id: req.params.id, userId: req.session.userId });
+    if (!item) return res.status(404).json({ error: 'Item not found' });
+    res.json({ message: 'Deleted' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 module.exports = router;

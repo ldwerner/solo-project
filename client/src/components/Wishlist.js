@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import ItemCard from './ItemCard';
 
 function Wishlist({ onAdd }) {
   const [items, setItems] = useState([]);
@@ -21,6 +22,16 @@ function Wishlist({ onAdd }) {
     }
   };
 
+  const deleteItem = async (itemId) => {
+    try {
+      await axios.delete(`/api/wishlist/${itemId}`);
+      setItems(items.filter(item => item._id !== itemId));
+      toast.success('Item deleted');
+    } catch (err) {
+      toast.error('Delete failed');
+    }
+  };
+
   return (
     <div className="wishlist-container">
       <h1>Wishlist</h1>
@@ -30,16 +41,7 @@ function Wishlist({ onAdd }) {
       </div>
       <div className="items-grid">
         {items.map(item => (
-          <div key={item._id} className="item-card">
-            <img src={item.imageUrl || 'https://via.placeholder.com/150?text=No+Image'} alt={item.title} className="item-image" />
-            <div className="item-details">
-              <h3>{item.title}</h3>
-              <p><strong>Current:</strong> ${item.currentPrice}</p>
-              <p><strong>Initial:</strong> ${item.initialPrice}</p>
-              <p><strong>Last Checked:</strong> {new Date(item.lastChecked).toLocaleDateString()}</p>
-              {item.onSale && <span className="sale-badge">🎉 On Sale!</span>}
-            </div>
-          </div>
+          <ItemCard key={item._id} item={item} onDelete={deleteItem} />
         ))}
       </div>
     </div>

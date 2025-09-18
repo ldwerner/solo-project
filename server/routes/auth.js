@@ -33,4 +33,12 @@ router.post('/logout', (req, res) => {
   res.json({ message: 'Logged out' });
 });
 
+router.get('/check', (req, res) => {
+  if (req.session.userId) {
+    res.json({ loggedIn: true });
+  } else {
+    res.status(401).json({ loggedIn: false });
+  }
+});
+
 module.exports = router;
