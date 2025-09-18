@@ -1,0 +1,25 @@
+const express = require('express');
+const Item = require('../models/Item');
+const { scrapeItem } = require('../scraper');
+const router = express.Router();
+
+router.post('/add', async (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const { url } = req.body;
+    const { title, price } = await scrapeItem(url);
+    const item = new Item({ userId: req.session.userId, url, title, initialPrice: price, currentPrice: price });
+    await item.save();
+    res.status(201).json(item);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/', async (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: 'Unauthorized' });
+  const items = await Item.find({ userId: req.session.userId }).sort({ lastChecked: -1 });
+  res.json(items);
+});
+
+module.exports = router;
