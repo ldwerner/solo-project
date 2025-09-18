@@ -7,11 +7,20 @@ router.post('/add', async (req, res) => {
   if (!req.session.userId) return res.status(401).json({ error: 'Unauthorized' });
   try {
     const { url } = req.body;
-    const { title, price } = await scrapeItem(url);
-    const item = new Item({ userId: req.session.userId, url, title, initialPrice: price, currentPrice: price });
+    const scraped = await scrapeItem(url);
+    const item = new Item({
+      userId: req.session.userId,
+      url,
+      title: scraped.title,
+      imageUrl: scraped.imageUrl,  
+      initialPrice: scraped.price,
+      currentPrice: scraped.price,
+      lastChecked: new Date()
+    });
     await item.save();
     res.status(201).json(item);
   } catch (err) {
+    console.error('Scrape error:', err);  // Debug log
     res.status(400).json({ error: err.message });
   }
 });

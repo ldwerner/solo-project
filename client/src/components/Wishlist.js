@@ -22,18 +22,26 @@ function Wishlist({ onAdd }) {
   };
 
   return (
-    <div>
+    <div className="wishlist-container">
       <h1>Wishlist</h1>
-      <button onClick={onAdd}>Add Item</button>
-      <button onClick={fetchItems}>Refresh Prices</button>
-      <ul>
+      <div className="actions">
+        <button onClick={onAdd}>Add Item</button>
+        <button onClick={fetchItems}>Refresh Prices</button>
+      </div>
+      <div className="items-grid">
         {items.map(item => (
-          <li key={item._id}>
-            <strong>{item.title}</strong> - Current: ${item.currentPrice} (Initial: ${item.initialPrice}) - Last: {new Date(item.lastChecked).toLocaleDateString()}
-            {item.onSale && <span> 🎉 On Sale!</span>}
-          </li>
+          <div key={item._id} className="item-card">
+            <img src={item.imageUrl || 'https://via.placeholder.com/150?text=No+Image'} alt={item.title} className="item-image" />
+            <div className="item-details">
+              <h3>{item.title}</h3>
+              <p><strong>Current:</strong> ${item.currentPrice}</p>
+              <p><strong>Initial:</strong> ${item.initialPrice}</p>
+              <p><strong>Last Checked:</strong> {new Date(item.lastChecked).toLocaleDateString()}</p>
+              {item.onSale && <span className="sale-badge">🎉 On Sale!</span>}
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

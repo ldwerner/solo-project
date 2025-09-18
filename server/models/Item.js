@@ -4,6 +4,7 @@ const itemSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   url: { type: String, required: true },
   title: { type: String, required: true },
+  imageUrl: { type: String },
   initialPrice: { type: Number, required: true },
   currentPrice: { type: Number, required: true },
   lastChecked: { type: Date, default: Date.now },
