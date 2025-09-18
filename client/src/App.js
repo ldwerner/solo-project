@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Login from './components/Login';
+import AddItem from './components/AddItem';
 import Wishlist from './components/Wishlist';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -43,6 +44,17 @@ function App() {
   if (view === 'login') return (
     <div className="app">
       <Login onLogin={handleLogin} />
+      <ToastContainer />
+    </div>
+  );
+
+  if (view === 'add') return (
+    <div className="app">
+      <header>
+        <h1>Wishlist App</h1>
+        <button onClick={handleLogout}>Log Out</button>
+      </header>
+      <AddItem onBack={() => setView('wishlist')} />
       <ToastContainer />
     </div>
   );

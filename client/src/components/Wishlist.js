@@ -5,20 +5,26 @@ import ItemCard from './ItemCard';
 
 function Wishlist({ onAdd }) {
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchItems();
   }, []);
 
   const fetchItems = async () => {
+    setLoading(true);
     try {
       const res = await axios.get('/api/wishlist');
       setItems(res.data);
+      if (res.data.length === 0) toast.info('No items in wishlist');
       res.data.forEach(item => {
         if (item.onSale) toast.info(`${item.title} is on sale! $${item.currentPrice}`);
       });
     } catch (err) {
-      toast.error('Error fetching wishlist');
+      console.error('Fetch error:', err);  // Debug log
+      toast.error('Error fetching wishlist: ' + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,12 +43,18 @@ function Wishlist({ onAdd }) {
       <h1>Wishlist</h1>
       <div className="actions">
         <button onClick={onAdd}>Add Item</button>
-        <button onClick={fetchItems}>Refresh Prices</button>
+        <button onClick={fetchItems} disabled={loading}>
+          {loading ? 'Refreshing...' : 'Refresh Prices'}
+        </button>
       </div>
       <div className="items-grid">
-        {items.map(item => (
-          <ItemCard key={item._id} item={item} onDelete={deleteItem} />
-        ))}
+        {items.length === 0 ? (
+          <p>No items yet. Add one!</p>
+        ) : (
+          items.map(item => (
+            <ItemCard key={item._id} item={item} onDelete={deleteItem} />
+          ))
+        )}
       </div>
     </div>
   );
